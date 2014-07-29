@@ -22,7 +22,7 @@
 							
 							String[] contentLines = ce.getInhalt().split("\n");
 							int lines = contentLines.length;
-							
+														
 							out.println("<table id='msgOutput' border='0'>");				
 							if(lines > 1){
 								out.println("<tr><th rowspan='"+ lines +"'>" + ce.getNick() + "</th><td>" + contentLines[0] + "</td></tr>");
@@ -39,7 +39,7 @@
 						}
 					}
 				}
-			}
+			} 
 		%>
 	</div>
 
