@@ -21,12 +21,12 @@
 						if (ce.getMsgOutput()) {
 							
 							String[] contentLines = ce.getInhalt().split("\n");
-							int lines = contentLines.length;
+							int length = contentLines.length;
 														
 							out.println("<table id='msgOutput' border='0'>");				
-							if(lines > 1){
-								out.println("<tr><th rowspan='"+ lines +"'>" + ce.getNick() + "</th><td>" + contentLines[0] + "</td></tr>");
-								for(int i = 1; i < lines; i++){
+							if(length > 1){
+								out.println("<tr><th rowspan='"+ length +"'>" + ce.getNick() + "</th><td>" + contentLines[0] + "</td></tr>");
+								for(int i = 1; i < length; i++){
 									out.println("<tr><td>" + contentLines[i] + "</td></tr>");
 								}
 							}else {
@@ -35,11 +35,16 @@
 							out.println("</table>");
 						}
 						if (ce.getAlertOutput()) {
-							out.println("<p style='color:red; font-weight: bold;'>System | " + ce.getAlert() + "</p>");
+							String[] alertLines = ce.getAlert().split("\n");
+							int length = alertLines.length;
+							for(int i = 0; i < length; i++){
+								out.println("<p style='color:red; font-weight: bold;'>System | " + alertLines[i] + "</p>");
+							}
+							
 						}
 					}
 				}
-			} 
+			}
 		%>
 	</div>
 
@@ -52,13 +57,10 @@
 <script>
 	$(document).ready(function() {
 		$('textarea#textarea').keypress(function(e) {
-			if (e.keyCode == 13 && e.shiftKey) {
-
-			} else if (e.which == 13) {
-				alert(trim($(this).val()));
-				/*if(trim($(this).val()) != ""){					
+			if (e.which == 13) {
+				if ($.trim($(this).val()) != "") {
 					$('form#formMsg').submit();
-				}*/				
+				}
 			}
 		});
 	});

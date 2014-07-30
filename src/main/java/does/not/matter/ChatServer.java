@@ -18,7 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 public class ChatServer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	ArrayList<ChatEintrag> chatverlauf = new ArrayList<ChatEintrag>();
+	private static ArrayList<ChatEintrag> chatverlauf = new ArrayList<ChatEintrag>();
+	private static ArrayList<ChatRoom> chatrooms = new ArrayList<ChatRoom>();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -26,13 +27,14 @@ public class ChatServer extends HttpServlet {
 	public ChatServer() {
 		super();
 		chatverlauf = new ArrayList<ChatEintrag>();
+		chatrooms = new ArrayList<ChatRoom>();
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//		request.setAttribute("chatverlauf", chatverlauf);
 		request.getServletContext().setAttribute("chatverlauf", chatverlauf);
 		request.getRequestDispatcher("/index.jsp").forward(request, response);
-		//getChat(request, response);
+
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -48,11 +50,29 @@ public class ChatServer extends HttpServlet {
 			System.out.println("add chat entry");
 			//		request.setAttribute("chatverlauf", chatverlauf);
 			request.getRequestDispatcher("/index.jsp").forward(request, response);
-			//getChat(request, response);
+
 		}
 	}
 
-	private void getChat(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public static ArrayList<ChatRoom> getRooms(){
+		return chatrooms;
+	}
+	
+	public static boolean addChatroom(ChatRoom cr) {
+		try {
+			for (ChatRoom room : chatrooms) {
+				if(room.getRoomName().equalsIgnoreCase(cr.getRoomName())){
+					return false;
+				}
+			}
+			chatrooms.add(cr);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/*private void getChat(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
@@ -77,6 +97,6 @@ public class ChatServer extends HttpServlet {
 		out.println("</body></html>");
 		out.println("<script>$('#textarea').keypress(function( event ) {if ( event.which == 13 ) { event.preventDefault();   }</script>");
 		out.close();
-	}
+	}*/
 
 }
