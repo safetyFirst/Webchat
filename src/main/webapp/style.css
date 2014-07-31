@@ -9,7 +9,7 @@ div#menu {
 	right: 0%;
 	top: 0%;
 	height: 86%;
-	width: 16%;
+	width: 21%;
 	background: #28314b;
 	color: #4c90c9;
 	font-family: Consolas, sans-serif;
@@ -22,12 +22,15 @@ div#verlauf {
 	overflow: auto;
 	position: fixed; top : 0;
 	height: 86%;
-	width: 80%;
+	width: 75%;
 	padding: 0% 2% 0% 2%;
 	background: black;
 	color: white;
 	font-family: Consolas, sans-serif;
 	top: 0;
+}
+div#verlauf a {
+	color: lightblue;
 }
 
 table#msgOutput {
@@ -35,7 +38,7 @@ table#msgOutput {
 }
 
 table#msgOutput th {
-	vertical-align: top;
+	vertical-align: middle;
 	width: 200px;
 	max-width: 200px;
 	border: 1px solid #888;
@@ -60,9 +63,9 @@ form#formMsg {
 	position: fixed;
 	bottom: 0;
 	clear: both;
-	height: 6%;
-	width: 96%;
-	padding: 2%;
+	height: 14%;
+	width: 100%;
+	padding: 0%;
 	font-family: Consolas, sans-serif;
 	background: #293134;
 	border-top: 1px solid #888;
@@ -75,10 +78,23 @@ form textarea#textarea {
 	color: #4c90c9;
 	font-family: Consolas, sans-serif;
 	border: 1px solid #888; 
+	display: inline-block;
+	height: 50%;
+	width: 50%;
+	margin: 0%;	
+	position: absolute;
+	bottom: 24%;	
+	left: 1%;
 }
 
 form input#sndMsgBtn {
+	display: inline-block;
 	border: 1px solid #888; 
 	background: #28314b;
 	color: #4c90c9;
+	position: absolute;
+	height: 18%;
+	bottom: 40%;	
+	left: 52%
 }
+
