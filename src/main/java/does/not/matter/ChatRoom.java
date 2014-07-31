@@ -9,13 +9,14 @@ public class ChatRoom {
 	private Long roomID;
 	private String roomName;
 	private String ownerID;
-	private List<Long> allowedMembers = new ArrayList<Long>();
+	private List<String> allowedMembers = new ArrayList<String>();
 
 	public ChatRoom(String roomName, String ownerID) {
 		entryCounter++;
 		this.roomID = entryCounter;
 		this.roomName = roomName;
 		this.ownerID = ownerID;
+		this.allowedMembers.add(ownerID);
 	}
 
 	public Long getRoomID() {
@@ -26,7 +27,7 @@ public class ChatRoom {
 		return this.roomName;
 	}
 
-	public List<Long> getAllowedMembers() {
+	public List<String> getAllowedMembers() {
 		return this.allowedMembers;
 	}
 }

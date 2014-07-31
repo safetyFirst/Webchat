@@ -34,13 +34,12 @@ public class ChatServer extends HttpServlet {
 		//		request.setAttribute("chatverlauf", chatverlauf);
 		request.getServletContext().setAttribute("chatverlauf", chatverlauf);
 		request.getRequestDispatcher("/index.jsp").forward(request, response);
-
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String content = request.getParameter("msg");
 		System.out.println("Content: " + content);
-		if (!content.equals("") || content != null) {
+		if (content != null && !content.trim().equals("")) {
 
 			String clientIP = request.getRemoteAddr();
 
@@ -50,7 +49,6 @@ public class ChatServer extends HttpServlet {
 			System.out.println("add chat entry");
 			//		request.setAttribute("chatverlauf", chatverlauf);
 			request.getRequestDispatcher("/index.jsp").forward(request, response);
-
 		}
 	}
 

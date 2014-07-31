@@ -1,0 +1,84 @@
+img#dbad-logo {
+	position: fixed;
+	bottom: 2%;
+	right: 2%;
+	z-index: 999;
+}
+div#menu {
+	position: fixed;
+	right: 0%;
+	top: 0%;
+	height: 86%;
+	width: 16%;
+	background: #28314b;
+	color: #4c90c9;
+	font-family: Consolas, sans-serif;
+	border-left: 1px solid #888; 
+	overflow: auto;
+	z-index: 1000;
+}
+
+div#verlauf {
+	overflow: auto;
+	position: fixed; top : 0;
+	height: 86%;
+	width: 80%;
+	padding: 0% 2% 0% 2%;
+	background: black;
+	color: white;
+	font-family: Consolas, sans-serif;
+	top: 0;
+}
+
+table#msgOutput {
+	margin: 20px 0px 20px 0px;
+}
+
+table#msgOutput th {
+	vertical-align: top;
+	width: 200px;
+	max-width: 200px;
+	border: 1px solid #888;
+	background: #28314B;
+	color: #4c90c9;
+}
+
+table#msgOutput td {
+	padding-left: 50px;
+}
+
+table#msgOutput td.ownMsg {
+	color: #4c90c9;
+}
+
+div#verlauf p {
+	margin: 20px 0px 20px 0px;
+}
+
+form#formMsg {
+	margin: 0;
+	position: fixed;
+	bottom: 0;
+	clear: both;
+	height: 6%;
+	width: 96%;
+	padding: 2%;
+	font-family: Consolas, sans-serif;
+	background: #293134;
+	border-top: 1px solid #888;
+	z-index: 1001;
+}
+
+form textarea#textarea {
+	resize: none;
+	background: #28314b;
+	color: #4c90c9;
+	font-family: Consolas, sans-serif;
+	border: 1px solid #888; 
+}
+
+form input#sndMsgBtn {
+	border: 1px solid #888; 
+	background: #28314b;
+	color: #4c90c9;
+}
