@@ -61,33 +61,38 @@
 
 </body>
 <script>
-	$(document)
-			.ready(
-					function() {
-						$('textarea#textarea').keypress(function(e) {
-							if (e.which == 13 && e.shiftKey) {
-							} else if (e.which == 13) {
-								if ($.trim($(this).val()) != "") {
-									$('form#formMsg').submit();
-								}
-							}
-						});
+	$(document).ready(function() {
+		$('textarea#textarea').keypress(function(e) {
+			if (e.which == 13 && e.shiftKey) {
+			} else if (e.which == 13) {
+				if ($.trim($(this).val()) != "") {
+					$('form#formMsg').submit();
+				}
+			}
+		});
 
-						$('div#verlauf').scrollTop(
-								$('div#verlauf')[0].scrollHeight);
+		$('div#verlauf').scrollTop($('div#verlauf')[0].scrollHeight);
 
-						var test = /Hallo/g;
-						var exp = /http/g;
-						//$("div#verlauf td").replace(exp,"<a href='$1'>$1</a>");
+		var exp = /http/g;
 
-						$("div#verlauf td").each(function() {							
-							var p = $(this);
-							if (p[0].innerHTML.match(exp) != null) {
-								p.html("<a href='" + p[0].innerHTML + "'>" + p[0].innerHTML + "</a>");
-							}
-							//p.html(" EIN LINK ");		
-						});
-					});
+		$("div#verlauf td").each(function() {
+			var p = $(this);
+			/*if (p[0].innerHTML.match(exp) != null) {
+				p.html("<a target='_blank' href='" + p[0].innerHTML + "'>" + p[0].innerHTML + "</a>");
+			}*/
+			$.ajax({
+				type : "POST",
+				url : "URL",
+				data : {url: p[0].innerHTML}
+			}).done(function(data) {
+				if (data == "OK") {
+					p.html("<a target='_blank' href='" + p[0].innerHTML + "'>" + p[0].innerHTML + "</a>");					
+				}else{
+					
+				}
+			});
+		});
+	});
 </script>
 
 <style>
