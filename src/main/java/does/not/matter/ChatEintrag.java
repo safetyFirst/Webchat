@@ -54,8 +54,9 @@ public class ChatEintrag {
 						this.alert = "Der Nickname darf kein Komma [,] enthalten.";
 					} else {
 						this.nickname = command_split[1].trim();
-						setNickToMap(this.clientID, this.nickname);
-						this.alert = "Nickname wurde geändert zu '" + this.nickname + "'.";
+						this.alert = getNickFromMap(this.clientID) + " hat seinen Nickname zu '" + this.nickname + "' geändert.";
+						setNickToMap(this.clientID, this.nickname);		
+						allowedRecipients.add("*");
 					}
 				} else {
 					this.alert = "Nickname muss als Parameter angegeben werden";
