@@ -6,20 +6,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChatEintrag {
+public class ChatEntry {
 
 	private static Long entryCounter = 0L;
 	private Long entryID;
 
 	private String clientID;
-	private static List<String> clientIDs = new ArrayList<String>();
 
 	private String ip;
 	private int port;
 
 	private String nickname;
-	private static Map<String, String> nicklist = new HashMap<String, String>();
-
+	
 	private String content;
 	private String alert;
 	private boolean msgOutput = false;
@@ -27,23 +25,13 @@ public class ChatEintrag {
 
 	private List<String> allowedRecipients = new ArrayList<String>();
 
-	public ChatEintrag(String ip, String content) {
+	public ChatEntry(String ip, String content) {
 		super();
 		entryCounter++;
 		this.entryID = entryCounter;
 		this.ip = ip;
 		this.clientID = this.ip;
-		this.content = content;
-
-		boolean idExists = false;
-		for (String id : clientIDs) {
-			if (id.equals(this.clientID)) {
-				idExists = true;
-			}
-		}
-		if (!idExists) {
-			clientIDs.add(this.clientID);
-		}
+		this.content = content;	
 
 		if (this.content.charAt(0) == '/') { // Befehl
 			String[] inhalt_split = this.content.split("/");
@@ -54,8 +42,12 @@ public class ChatEintrag {
 						this.alert = "Der Nickname darf kein Komma [,] enthalten.";
 					} else {
 						this.nickname = command_split[1].trim();
-						this.alert = getNickFromMap(this.clientID) + " hat seinen Nickname zu '" + this.nickname + "' geändert.";
-						setNickToMap(this.clientID, this.nickname);		
+						if (ChatNick.getNickFromMap(this.clientID) != null) {
+							this.alert = "'" + ChatNick.getNickFromMap(this.clientID) + "' hat seinen Nickname zu '" + this.nickname + "' geändert.";
+						} else {
+							this.alert = "[" + this.clientID + "]" + " hat seinen Nickname zu '" + this.nickname + "' geändert.";
+						}
+						ChatNick.setNickToMap(this.clientID, this.nickname);
 						allowedRecipients.add("*");
 					}
 				} else {
@@ -85,7 +77,7 @@ public class ChatEintrag {
 				}
 				this.alertOutput = true;
 			} else if (command_split[0].equalsIgnoreCase("listNicks")) {
-				Collection<String> nicks = nicklist.values();
+				Collection<String> nicks = ChatNick.nicklist.values();
 				if (nicks.isEmpty()) {
 					this.alert = "Es existieren momentan keine Nicknames.";
 				} else {
@@ -113,8 +105,8 @@ public class ChatEintrag {
 				this.alertOutput = true;
 			}
 		} else { // Nachricht
-			if (getNickFromMap(this.clientID) != null) {
-				this.nickname = getNickFromMap(this.clientID);
+			if (ChatNick.getNickFromMap(this.clientID) != null) {
+				this.nickname = ChatNick.getNickFromMap(this.clientID);
 				this.msgOutput = true;
 				allowedRecipients.add("*");
 			} else {
@@ -125,21 +117,13 @@ public class ChatEintrag {
 		}
 		allowedRecipients.add(this.clientID);
 	}
-	
-	public String getClientID(){
+
+	public String getClientID() {
 		return this.clientID;
 	}
 
 	public String getNick() {
 		return this.nickname;
-	}
-
-	private String getNickFromMap(String id) {
-		return nicklist.get(id);
-	}
-
-	private void setNickToMap(String id, String nick) {
-		nicklist.put(id, nick);
 	}
 
 	public String getInhalt() {

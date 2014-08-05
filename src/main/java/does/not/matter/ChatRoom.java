@@ -5,15 +5,15 @@ import java.util.List;
 
 public class ChatRoom {
 
-	private static Long entryCounter = 0L;
+	private static Long roomCounter = 0L;
 	private Long roomID;
 	private String roomName;
 	private String ownerID;
 	private List<String> allowedMembers = new ArrayList<String>();
 
 	public ChatRoom(String roomName, String ownerID) {
-		entryCounter++;
-		this.roomID = entryCounter;
+		roomCounter++;
+		this.roomID = roomCounter;
 		this.roomName = roomName;
 		this.ownerID = ownerID;
 		this.allowedMembers.add(ownerID);

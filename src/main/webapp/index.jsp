@@ -1,4 +1,4 @@
-<%@page import="does.not.matter.ChatEintrag"%>
+<%@page import="does.not.matter.ChatEntry"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -12,13 +12,17 @@
 <body style='margin: 0; padding: 0;'>
 
 	<img src='dbad_transparent.gif' id='dbad-logo' />
-	<div id='menu'></div>
+	<div id='menu'>
+		<%
+			
+		%>
+	</div>
 	<div id='verlauf'>
 		<%
-			ArrayList<ChatEintrag> chatverlauf = (ArrayList<ChatEintrag>) application.getAttribute("chatverlauf");
+			ArrayList<ChatEntry> chatverlauf = (ArrayList<ChatEntry>) application.getAttribute("chatverlauf");
 			
 			if(chatverlauf != null){				
-				for (ChatEintrag ce : chatverlauf) {
+				for (ChatEntry ce : chatverlauf) {
 					ArrayList<String> allowedRecipients = new ArrayList<String>(ce.getAllowedRecipients());
 					if((allowedRecipients.get(0) != null && allowedRecipients.get(0).equals("*") ) || allowedRecipients.contains(request.getRemoteAddr())){					
 						if (ce.getMsgOutput()) {
@@ -83,16 +87,11 @@
 					entry : p[0].innerHTML
 				}
 			}).done(function(data) {
-				/*if (data == "OK") {
-					p.html("<a target='_blank' href='" + p[0].innerHTML + "'>" + p[0].innerHTML + "</a>");					
-				}*/
-
 				if (data != "") {
 					var urls = data.split("|");
 					for (var i = 0; i < urls.length; i++) {
-						var wwwCheck = urls[i].substring(0,4); // www.
+						var wwwCheck = urls[i].substring(0, 4); // www.
 						if (wwwCheck == "www.") {
-							alert(wwwCheck);
 							p.html(p[0].innerHTML.replace(urls[i], "<a target='_blank' href='http://" + urls[i] + "'>" + urls[i] + "</a>"));
 						} else {
 							p.html(p[0].innerHTML.replace(urls[i], "<a target='_blank' href='" + urls[i] + "'>" + urls[i] + "</a>"));
