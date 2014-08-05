@@ -73,22 +73,31 @@
 
 		$('div#verlauf').scrollTop($('div#verlauf')[0].scrollHeight);
 
-		var exp = /http/g;
-
 		$("div#verlauf td").each(function() {
 			var p = $(this);
-			/*if (p[0].innerHTML.match(exp) != null) {
-				p.html("<a target='_blank' href='" + p[0].innerHTML + "'>" + p[0].innerHTML + "</a>");
-			}*/
+
 			$.ajax({
 				type : "POST",
 				url : "URL",
-				data : {url: p[0].innerHTML}
+				data : {
+					entry : p[0].innerHTML
+				}
 			}).done(function(data) {
-				if (data == "OK") {
+				/*if (data == "OK") {
 					p.html("<a target='_blank' href='" + p[0].innerHTML + "'>" + p[0].innerHTML + "</a>");					
-				}else{
-					
+				}*/
+
+				if (data != "") {
+					var urls = data.split("|");
+					for (var i = 0; i < urls.length; i++) {
+						var wwwCheck = urls[i].substring(0,4); // www.
+						if (wwwCheck == "www.") {
+							alert(wwwCheck);
+							p.html(p[0].innerHTML.replace(urls[i], "<a target='_blank' href='http://" + urls[i] + "'>" + urls[i] + "</a>"));
+						} else {
+							p.html(p[0].innerHTML.replace(urls[i], "<a target='_blank' href='" + urls[i] + "'>" + urls[i] + "</a>"));
+						}
+					}
 				}
 			});
 		});

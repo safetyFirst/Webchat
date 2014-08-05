@@ -1,6 +1,5 @@
 package does.not.matter;
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -9,11 +8,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
 
 /**
  * Servlet implementation class URL
@@ -41,12 +35,25 @@ public class UrlMsg extends HttpServlet {
 
 	private void checkURL(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ServletOutputStream out = response.getOutputStream();
-		String address = request.getParameter("url").trim();
-		if (address.matches("(^http://|^https://|^ftp://|^file:///|^www.).*")) {
-			out.print("OK");
+		String entry = request.getParameter("entry").trim();
+		if (entry.matches(".*http://.*") || entry.matches(".*https://.*") || entry.matches(".*ftp://.*") || entry.matches(".*file:///.*") || entry.matches(".*www..*")) {
+
+			String[] address_split = entry.split(" ");
+			String urls = "";
+
+			for (int i = 0; i < address_split.length; i++) {
+				if (address_split[i].matches("(^http://|^https://|^ftp://|^file:///|^www.).*")) {
+					if (urls.equals("")) {
+						urls += address_split[i];
+					} else {
+						urls += "|" + address_split[i];
+					}
+				}
+			}
+			out.print(urls);
 		}
 
-		File f = new File(address.replace("file:///", ""));
+		/*File f = new File(address.replace("file:///", ""));
 		System.out.println("Exists: " + f.exists());
 
 		HttpClient client = new HttpClient();
@@ -54,10 +61,9 @@ public class UrlMsg extends HttpServlet {
 		HttpMethod method = new GetMethod(address);	
 		client.setTimeout(1000);
 		client.executeMethod(method);
-		System.out.println(method.getStatusCode());
-		
+		System.out.println(method.getStatusCode());		
 
-		/*URL url = new URL(address);
+		URL url = new URL(address);
 		InputStream is = null;
 		try {
 			is = url.openStream();
