@@ -14,25 +14,21 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class ChatServer
  */
-@WebServlet("/ChatServer")
+@WebServlet("/Chat")
 public class ChatServer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	private static ArrayList<ChatEntry> chatverlauf = new ArrayList<ChatEntry>();
-	private static ArrayList<ChatRoom> chatrooms = new ArrayList<ChatRoom>();
-
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public ChatServer() {
-		super();
-		chatverlauf = new ArrayList<ChatEntry>();
-		chatrooms = new ArrayList<ChatRoom>();
-	}
-
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		//		request.setAttribute("chatverlauf", chatverlauf);
-		request.getServletContext().setAttribute("chatverlauf", chatverlauf);
+		ChatRoom.addChatroom(new ChatRoom("Public Room", 0L));
+		ChatRoom cr = ChatRoom.getRoomByName("Public Room");
+
+		String clientIP = request.getRemoteAddr();
+		ChatClient.addClient(new ChatClient(clientIP));
+
+		request.getServletContext().setAttribute("chatrooms", ChatRoom.getRooms());
+		request.getServletContext().setAttribute("chatverlauf", cr.getChatverlauf());
+		request.getServletContext().setAttribute("nickname", ChatClient.getNickByIP(clientIP));
+		request.getServletContext().setAttribute("clientID", ChatClient.getIdByIP(clientIP));
 		request.getRequestDispatcher("/index.jsp").forward(request, response);
 	}
 
@@ -42,31 +38,17 @@ public class ChatServer extends HttpServlet {
 		if (content != null && !content.trim().equals("")) {
 
 			String clientIP = request.getRemoteAddr();
+			String roomName = request.getParameter("room");
 
-			request.getServletContext().setAttribute("chatverlauf", chatverlauf);
-			ChatEntry ce = new ChatEntry(clientIP, content);
-			chatverlauf.add(ce);
-			System.out.println("add chat entry");
-			//		request.setAttribute("chatverlauf", chatverlauf);
+			ChatEntry ce = new ChatEntry(clientIP, content, roomName);
+			ChatRoom cr = ChatRoom.getRoomByName(roomName);
+			ChatRoom.addChatEntryToRoom(cr.getRoomID(), ce);
+
+			request.getServletContext().setAttribute("chatrooms", ChatRoom.getRooms());
+			request.getServletContext().setAttribute("chatverlauf", cr.getChatverlauf());
+			request.getServletContext().setAttribute("nickname", ChatClient.getNickByIP(clientIP));
+			request.getServletContext().setAttribute("clientID", ChatClient.getIdByIP(clientIP));
 			request.getRequestDispatcher("/index.jsp").forward(request, response);
-		}
-	}
-
-	public static ArrayList<ChatRoom> getRooms(){
-		return chatrooms;
-	}
-	
-	public static boolean addChatroom(ChatRoom cr) {
-		try {
-			for (ChatRoom room : chatrooms) {
-				if(room.getRoomName().equalsIgnoreCase(cr.getRoomName())){
-					return false;
-				}
-			}
-			chatrooms.add(cr);
-			return true;
-		} catch (Exception e) {
-			return false;
 		}
 	}
 }

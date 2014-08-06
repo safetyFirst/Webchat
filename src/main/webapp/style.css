@@ -4,6 +4,7 @@ img#dbad-logo {
 	right: 2%;
 	z-index: 1002;
 }
+
 div#menu {
 	position: fixed;
 	right: 0%;
@@ -13,14 +14,29 @@ div#menu {
 	background: #28314b;
 	color: #4c90c9;
 	font-family: Consolas, sans-serif;
-	border-left: 1px solid #888; 
+	border-left: 1px solid #888;
 	overflow: auto;
 	z-index: 1000;
 }
 
+div#menu p {
+	display: block;
+	padding: 0;
+	margin: 20px;
+}
+
+div#menu p a {
+	color: #4c90c9;
+	text-decoration: none;
+	border: 1px solid #888;
+	padding: 5px 10px;
+	background: #1f263b;
+}
+
 div#verlauf {
 	overflow: auto;
-	position: fixed; top : 0;
+	position: fixed;
+	top: 0;
 	height: 86%;
 	width: 75%;
 	padding: 0% 2% 0% 2%;
@@ -29,6 +45,7 @@ div#verlauf {
 	font-family: Consolas, sans-serif;
 	top: 0;
 }
+
 div#verlauf a {
 	color: lightblue;
 }
@@ -77,24 +94,23 @@ form textarea#textarea {
 	background: #28314b;
 	color: #4c90c9;
 	font-family: Consolas, sans-serif;
-	border: 1px solid #888; 
+	border: 1px solid #888;
 	display: inline-block;
 	height: 50%;
 	width: 50%;
-	margin: 0%;	
+	margin: 0%;
 	position: absolute;
-	bottom: 24%;	
+	bottom: 24%;
 	left: 1%;
 }
 
 form input#sndMsgBtn {
 	display: inline-block;
-	border: 1px solid #888; 
+	border: 1px solid #888;
 	background: #28314b;
 	color: #4c90c9;
 	position: absolute;
 	height: 18%;
-	bottom: 40%;	
+	bottom: 40%;
 	left: 52%
 }
-

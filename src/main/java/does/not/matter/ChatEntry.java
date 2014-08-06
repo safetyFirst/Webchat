@@ -11,27 +11,26 @@ public class ChatEntry {
 	private static Long entryCounter = 0L;
 	private Long entryID;
 
-	private String clientID;
+	private String room;
 
-	private String ip;
-	private int port;
+	private Long clientID;
+	private String clientIP;
 
-	private String nickname;
-	
 	private String content;
 	private String alert;
 	private boolean msgOutput = false;
 	private boolean alertOutput = false;
 
-	private List<String> allowedRecipients = new ArrayList<String>();
+	private List<Long> allowedRecipients = new ArrayList<Long>();
 
-	public ChatEntry(String ip, String content) {
+	public ChatEntry(String ip, String content, String room) {
 		super();
 		entryCounter++;
 		this.entryID = entryCounter;
-		this.ip = ip;
-		this.clientID = this.ip;
-		this.content = content;	
+		this.room = room;
+		this.content = content;
+		this.clientIP = ip;
+		this.clientID = ChatClient.getIdByIP(ip);
 
 		if (this.content.charAt(0) == '/') { // Befehl
 			String[] inhalt_split = this.content.split("/");
@@ -41,14 +40,20 @@ public class ChatEntry {
 					if (command_split[1].trim().contains(",")) {
 						this.alert = "Der Nickname darf kein Komma [,] enthalten.";
 					} else {
-						this.nickname = command_split[1].trim();
-						if (ChatNick.getNickFromMap(this.clientID) != null) {
-							this.alert = "'" + ChatNick.getNickFromMap(this.clientID) + "' hat seinen Nickname zu '" + this.nickname + "' geändert.";
+						String nickname = command_split[1].trim();
+						String oldNickname = ChatClient.getNickByID(this.clientID);
+
+						if (ChatClient.setNickByID(nickname, this.clientID)) {
+							if (oldNickname != null) {
+								this.alert = "'" + oldNickname + "' hat seinen Nickname zu '" + nickname + "' geändert.";
+							} else {
+								this.alert = "[" + this.clientIP + "]" + " hat seinen Nickname zu '" + nickname + "' geändert.";
+							}
 						} else {
-							this.alert = "[" + this.clientID + "]" + " hat seinen Nickname zu '" + this.nickname + "' geändert.";
+							this.alert = "Der Nickname '" + nickname + "' ist bereits vergeben.";
 						}
-						ChatNick.setNickToMap(this.clientID, this.nickname);
-						allowedRecipients.add("*");
+
+						allowedRecipients.add(-1L);
 					}
 				} else {
 					this.alert = "Nickname muss als Parameter angegeben werden";
@@ -56,7 +61,7 @@ public class ChatEntry {
 				this.alertOutput = true;
 			} else if (command_split[0].equalsIgnoreCase("createRoom")) { // z.B. /createRoom Halle
 				if (command_split[1] != null && !command_split[1].trim().equals("")) {
-					if (ChatServer.addChatroom(new ChatRoom(command_split[1].trim(), this.clientID))) {
+					if (ChatRoom.addChatroom(new ChatRoom(command_split[1].trim(), this.clientID))) {
 						this.alert = "Der Raum mit dem Namen '" + command_split[1].trim() + "' wurde erfolgreich erstellt.";
 					} else {
 						this.alert = "Fehler: Der Raum konnte nicht erstellt werden. Raumliste anzeigen mit /listRooms";
@@ -66,7 +71,7 @@ public class ChatEntry {
 				}
 				this.alertOutput = true;
 			} else if (command_split[0].equalsIgnoreCase("listRooms")) { // listet alle Räume auf
-				ArrayList<ChatRoom> rooms = ChatServer.getRooms();
+				ArrayList<ChatRoom> rooms = ChatRoom.getRooms();
 				if (rooms.size() == 0) {
 					this.alert = "Es existieren momentan keine Räume.";
 				} else {
@@ -77,7 +82,7 @@ public class ChatEntry {
 				}
 				this.alertOutput = true;
 			} else if (command_split[0].equalsIgnoreCase("listNicks")) {
-				Collection<String> nicks = ChatNick.nicklist.values();
+				Collection<String> nicks = ChatClient.nicklist.values();
 				if (nicks.isEmpty()) {
 					this.alert = "Es existieren momentan keine Nicknames.";
 				} else {
@@ -101,29 +106,21 @@ public class ChatEntry {
 				this.alertOutput = true;
 			} else {
 				this.alert = "Unbekannter Befehl: " + this.content;
-				this.nickname = "[" + this.ip + "]";
 				this.alertOutput = true;
 			}
 		} else { // Nachricht
-			if (ChatNick.getNickFromMap(this.clientID) != null) {
-				this.nickname = ChatNick.getNickFromMap(this.clientID);
-				this.msgOutput = true;
-				allowedRecipients.add("*");
-			} else {
-				this.nickname = "[" + this.ip + "]";
-				this.msgOutput = true;
-				allowedRecipients.add("*");
-			}
+			this.msgOutput = true;
+			allowedRecipients.add(-1L);
 		}
 		allowedRecipients.add(this.clientID);
 	}
 
-	public String getClientID() {
+	public Long getClientID() {
 		return this.clientID;
 	}
 
 	public String getNick() {
-		return this.nickname;
+		return ChatClient.getNickByID(this.clientID);
 	}
 
 	public String getInhalt() {
@@ -142,7 +139,7 @@ public class ChatEntry {
 		return this.alertOutput;
 	}
 
-	public List<String> getAllowedRecipients() {
+	public List<Long> getAllowedRecipients() {
 		return this.allowedRecipients;
 	}
 }

@@ -1,3 +1,4 @@
+<%@page import="does.not.matter.ChatRoom"%>
 <%@page import="does.not.matter.ChatEntry"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
@@ -14,20 +15,26 @@
 	<img src='dbad_transparent.gif' id='dbad-logo' />
 	<div id='menu'>
 		<%
-			
+			String actRoom = "Public Room";
+			ArrayList<ChatRoom> chatrooms = (ArrayList<ChatRoom>) application.getAttribute("chatrooms");
+			for(ChatRoom cr : chatrooms){
+				out.print("<p><a href='" + cr.getRoomID() + "'>" + cr.getRoomName() + "</a></p>");
+			}
 		%>
 	</div>
-	<div id='verlauf'>
+	<div id='verlauf' room='Public Room'>
 		<%
 			ArrayList<ChatEntry> chatverlauf = (ArrayList<ChatEntry>) application.getAttribute("chatverlauf");
+			String nickname = (String) application.getAttribute("nickname");
+			Long clientID = (Long) application.getAttribute("clientID");
 			
 			if(chatverlauf != null){				
 				for (ChatEntry ce : chatverlauf) {
-					ArrayList<String> allowedRecipients = new ArrayList<String>(ce.getAllowedRecipients());
-					if((allowedRecipients.get(0) != null && allowedRecipients.get(0).equals("*") ) || allowedRecipients.contains(request.getRemoteAddr())){					
+					ArrayList<Long> allowedRecipients = new ArrayList<Long>(ce.getAllowedRecipients());
+					if((allowedRecipients.get(0) != null && allowedRecipients.get(0).equals(-1L) ) || allowedRecipients.contains(clientID)){					
 						if (ce.getMsgOutput()) {
 							String ownMsg = "";
-							if(ce.getClientID().equalsIgnoreCase(request.getRemoteAddr())){
+							if(ce.getClientID() == clientID){
 								ownMsg = "class='ownMsg'";
 							}
 							
@@ -58,14 +65,15 @@
 		%>
 	</div>
 
-	<form action='ChatServer' method='post' name='sndMsg' id='formMsg'>
-		<textarea autofocus rows='3' cols='100' name='msg' id='textarea'></textarea>
-		<input id='sndMsgBtn' type='submit' value='Senden' name='send' />
+	<form action='Chat' method='post' name='sndMsg' id='formMsg'>
+		<textarea placeholder=" Als '<%out.print(nickname);%>' Nachricht versenden..." autofocus rows='3' cols='100' name='msg' id='textarea'></textarea>
+		<input type='hidden' name='room' value='Public Room' /> <input id='sndMsgBtn' type='submit' value='Senden' name='send' />
 	</form>
 
 </body>
 <script>
 	$(document).ready(function() {
+
 		$('textarea#textarea').keypress(function(e) {
 			if (e.which == 13 && e.shiftKey) {
 			} else if (e.which == 13) {
