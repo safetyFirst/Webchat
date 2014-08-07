@@ -19,16 +19,24 @@ public class ChatServer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ChatRoom.addChatroom(new ChatRoom("Public Room", 0L));
-		ChatRoom cr = ChatRoom.getRoomByName("Public Room");
-
 		String clientIP = request.getRemoteAddr();
 		ChatClient.addClient(new ChatClient(clientIP));
 
+		ChatClient cc = ChatClient.getClientByIP(clientIP);
+
+		if (request.getParameter("room") != null) {
+			if (ChatClient.getClientByIP(clientIP).getSelectedRoom() != Long.parseLong(request.getParameter("room"))) {
+				ChatClient.changeSelectedRoom(ChatClient.getIdByIP(clientIP), Long.parseLong(request.getParameter("room")));
+			}
+		}
+
+		ChatRoom.addChatroom(new ChatRoom("Public Room", 0L));
+		ChatRoom cr = ChatRoom.getRoomByID(cc.getSelectedRoom());
+
 		request.getServletContext().setAttribute("chatrooms", ChatRoom.getRooms());
 		request.getServletContext().setAttribute("chatverlauf", cr.getChatverlauf());
-		request.getServletContext().setAttribute("nickname", ChatClient.getNickByIP(clientIP));
-		request.getServletContext().setAttribute("clientID", ChatClient.getIdByIP(clientIP));
+		request.getServletContext().setAttribute("client", ChatClient.getClientByIP(clientIP));
+		request.getServletContext().setAttribute("roomname", cr.getRoomName());
 		request.getRequestDispatcher("/index.jsp").forward(request, response);
 	}
 
@@ -38,16 +46,17 @@ public class ChatServer extends HttpServlet {
 		if (content != null && !content.trim().equals("")) {
 
 			String clientIP = request.getRemoteAddr();
-			String roomName = request.getParameter("room");
+			ChatClient cc = ChatClient.getClientByIP(clientIP);
+			ChatRoom cr = ChatRoom.getRoomByID(cc.getSelectedRoom());
 
-			ChatEntry ce = new ChatEntry(clientIP, content, roomName);
-			ChatRoom cr = ChatRoom.getRoomByName(roomName);
+			ChatEntry ce = new ChatEntry(clientIP, content, cc.getSelectedRoom());
+
 			ChatRoom.addChatEntryToRoom(cr.getRoomID(), ce);
 
 			request.getServletContext().setAttribute("chatrooms", ChatRoom.getRooms());
 			request.getServletContext().setAttribute("chatverlauf", cr.getChatverlauf());
-			request.getServletContext().setAttribute("nickname", ChatClient.getNickByIP(clientIP));
-			request.getServletContext().setAttribute("clientID", ChatClient.getIdByIP(clientIP));
+			request.getServletContext().setAttribute("client", ChatClient.getClientByIP(clientIP));
+			request.getServletContext().setAttribute("roomname", cr.getRoomName());
 			request.getRequestDispatcher("/index.jsp").forward(request, response);
 		}
 	}

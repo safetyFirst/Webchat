@@ -10,8 +10,8 @@ public class ChatClient {
 	private Long clientID;
 	private String clientIP;
 	private String nickname;
+	private Long selectedRoom;
 
-	public static Map<String, String> nicklist = new HashMap<String, String>();
 	private static ArrayList<ChatClient> clients = new ArrayList<ChatClient>();
 
 	public ChatClient(String clientIP) {
@@ -19,6 +19,15 @@ public class ChatClient {
 		clientCounter++;
 		this.clientID = clientCounter;
 		this.nickname = "Guest" + this.clientID;
+		this.selectedRoom = 1L;
+	}
+
+	public static ArrayList<String> getNicknames() {
+		ArrayList<String> names = new ArrayList<String>();
+		for (ChatClient chatClient : clients) {
+			names.add(chatClient.getNickname());
+		}
+		return names;
 	}
 
 	public static String getNickByID(Long id) {
@@ -78,7 +87,7 @@ public class ChatClient {
 
 	public static boolean addClient(ChatClient cc) {
 		for (ChatClient chatClient : clients) {
-			if (chatClient.getNickname().equals(cc.getNickname())) {
+			if (chatClient.getClientIP().equals(cc.getClientIP())) {
 				return false;
 			}
 		}
@@ -100,5 +109,21 @@ public class ChatClient {
 
 	private void setNickname(String name) {
 		this.nickname = name;
+	}
+
+	public Long getSelectedRoom() {
+		return this.selectedRoom;
+	}
+
+	private void setSelectedRoom(Long id) {
+		this.selectedRoom = id;
+	}
+
+	public static void changeSelectedRoom(Long clientID, Long sRoomID) {
+		for (ChatClient chatClient : clients) {
+			if (chatClient.getClientID() == clientID) {
+				chatClient.setSelectedRoom(sRoomID);
+			}
+		}
 	}
 }

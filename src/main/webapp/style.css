@@ -1,3 +1,7 @@
+body {
+	background: black;
+}
+
 img#dbad-logo {
 	position: fixed;
 	bottom: 2%;
@@ -10,7 +14,7 @@ div#menu {
 	right: 0%;
 	top: 0%;
 	height: 86%;
-	width: 21%;
+	width: 20%;
 	background: #28314b;
 	color: #4c90c9;
 	font-family: Consolas, sans-serif;
@@ -20,9 +24,9 @@ div#menu {
 }
 
 div#menu p {
-	display: block;
+	display: inline-block;
 	padding: 0;
-	margin: 20px;
+	margin: 25px 0px 0px 20px;
 }
 
 div#menu p a {
@@ -38,9 +42,9 @@ div#verlauf {
 	position: fixed;
 	top: 0;
 	height: 86%;
-	width: 75%;
-	padding: 0% 2% 0% 2%;
-	background: black;
+	width: 80%;
+	padding: 0% 0% 0% 0%;
+	background-color: rgba(0, 0, 0, 0.4);
 	color: white;
 	font-family: Consolas, sans-serif;
 	top: 0;
@@ -50,8 +54,22 @@ div#verlauf a {
 	color: lightblue;
 }
 
+div#verlauf div#roomname {
+	display: block;
+	height: 30px;
+	width: 600px;
+	position: fixed;
+	top: 0%;
+	left: 40%;
+	font-size: 30px;
+	margin-left: -300px;
+	line-height: 30px;
+	text-align: center;
+	
+}
+
 table#msgOutput {
-	margin: 20px 0px 20px 0px;
+	margin: 20px 0px 20px 10px;
 }
 
 table#msgOutput th {
@@ -67,12 +85,32 @@ table#msgOutput td {
 	padding-left: 50px;
 }
 
+table#msgOutput td#timestamp {
+	padding-left: 0px;
+	padding-right: 10px;
+	text-align: center;
+}
+
+table#msgOutput td#timestamp date {
+	font-size: 12px;
+}
+
+table#msgOutput td#timestamp time {
+	font-weight: bold;
+}
+
 table#msgOutput td.ownMsg {
 	color: #4c90c9;
 }
 
-div#verlauf p {
-	margin: 20px 0px 20px 0px;
+p#alertOutput {
+	color: red;
+	font-weight: bold;
+	margin: 20px 0px 20px 10px;
+}
+
+p#alertOutput span {
+	color: lightgreen;
 }
 
 form#formMsg {

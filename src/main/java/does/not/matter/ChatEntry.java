@@ -2,20 +2,20 @@ package does.not.matter;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public class ChatEntry {
 
 	private static Long entryCounter = 0L;
 	private Long entryID;
 
-	private String room;
+	private Long room;
 
 	private Long clientID;
 	private String clientIP;
 
+	private Date time;
 	private String content;
 	private String alert;
 	private boolean msgOutput = false;
@@ -23,11 +23,12 @@ public class ChatEntry {
 
 	private List<Long> allowedRecipients = new ArrayList<Long>();
 
-	public ChatEntry(String ip, String content, String room) {
+	public ChatEntry(String ip, String content, Long room) {
 		super();
 		entryCounter++;
 		this.entryID = entryCounter;
 		this.room = room;
+		this.time = new Date();
 		this.content = content;
 		this.clientIP = ip;
 		this.clientID = ChatClient.getIdByIP(ip);
@@ -82,15 +83,15 @@ public class ChatEntry {
 				}
 				this.alertOutput = true;
 			} else if (command_split[0].equalsIgnoreCase("listNicks")) {
-				Collection<String> nicks = ChatClient.nicklist.values();
-				if (nicks.isEmpty()) {
+				ArrayList<String> names = ChatClient.getNicknames();
+
+				if (names.isEmpty()) {
 					this.alert = "Es existieren momentan keine Nicknames.";
 				} else {
-					ArrayList<String> nicknames = new ArrayList<String>(nicks);
 					this.alert = "NICKNAMES:\n";
-					for (int i = 0; i < nicknames.size(); i++) {
-						this.alert += nicknames.get(i);
-						if (i < (nicknames.size() - 1)) {
+					for (int i = 0; i < names.size(); i++) {
+						this.alert += names.get(i);
+						if (i < (names.size() - 1)) {
 							this.alert += ", ";
 						}
 					}
@@ -123,7 +124,11 @@ public class ChatEntry {
 		return ChatClient.getNickByID(this.clientID);
 	}
 
-	public String getInhalt() {
+	public Date getTime() {
+		return this.time;
+	}
+
+	public String getContent() {
 		return this.content;
 	}
 
