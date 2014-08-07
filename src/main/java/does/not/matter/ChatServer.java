@@ -25,14 +25,21 @@ public class ChatServer extends HttpServlet {
 		ChatClient cc = ChatClient.getClientByIP(clientIP);
 
 		if (request.getParameter("room") != null) {
-			if (ChatClient.getClientByIP(clientIP).getSelectedRoom() != Long.parseLong(request.getParameter("room"))) {
-				ChatClient.changeSelectedRoom(ChatClient.getIdByIP(clientIP), Long.parseLong(request.getParameter("room")));
+			if (cc.getSelectedRoom() != Long.parseLong(request.getParameter("room"))) {
+				ChatClient.changeSelectedRoom(cc.getClientID(), Long.parseLong(request.getParameter("room")));
 			}
 		}
 
 		ChatRoom.addChatroom(new ChatRoom("Public Room", 0L));
 		ChatRoom cr = ChatRoom.getRoomByID(cc.getSelectedRoom());
+		String alertMessage = "";
+		if (cr == null) {
+			alertMessage = "Der zuletzt gewählte Raum existiert nicht mehr.";
+			cr = ChatRoom.getRoomByID(1L);
+			ChatClient.changeSelectedRoom(cc.getClientID(), 1L);
+		}
 
+		request.getServletContext().setAttribute("alertMessage", alertMessage);
 		request.getServletContext().setAttribute("chatrooms", ChatRoom.getRooms());
 		request.getServletContext().setAttribute("chatverlauf", cr.getChatverlauf());
 		request.getServletContext().setAttribute("client", ChatClient.getClientByIP(clientIP));
@@ -48,11 +55,22 @@ public class ChatServer extends HttpServlet {
 			String clientIP = request.getRemoteAddr();
 			ChatClient cc = ChatClient.getClientByIP(clientIP);
 			ChatRoom cr = ChatRoom.getRoomByID(cc.getSelectedRoom());
+			String alertMessage = "";
+			if (cr == null) {
+				alertMessage = "Der zuletzt gewählte Raum existiert nicht mehr.";
+				cr = ChatRoom.getRoomByID(1L);
+				ChatClient.changeSelectedRoom(cc.getClientID(), 1L);
+			}
 
 			ChatEntry ce = new ChatEntry(clientIP, content, cc.getSelectedRoom());
+			if (cr.getRoomID() != 1L && ce.getAlertOutput()) {
+				ChatRoom.addChatEntryToRoom(cr.getRoomID(), ce);
+				ChatRoom.addChatEntryToRoom(1L, ce);
+			} else {
+				ChatRoom.addChatEntryToRoom(cr.getRoomID(), ce);
+			}
 
-			ChatRoom.addChatEntryToRoom(cr.getRoomID(), ce);
-
+			request.getServletContext().setAttribute("alertMessage", alertMessage);
 			request.getServletContext().setAttribute("chatrooms", ChatRoom.getRooms());
 			request.getServletContext().setAttribute("chatverlauf", cr.getChatverlauf());
 			request.getServletContext().setAttribute("client", ChatClient.getClientByIP(clientIP));

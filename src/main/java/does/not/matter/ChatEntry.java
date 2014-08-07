@@ -71,6 +71,20 @@ public class ChatEntry {
 					this.alert = "Raumname muss als Parameter angegeben werden.";
 				}
 				this.alertOutput = true;
+			} else if (command_split[0].equalsIgnoreCase("deleteRoom")) {
+				if (command_split[1] != null && !command_split[1].trim().equals("")) {
+					ChatRoom roomToDelete = ChatRoom.getRoomByID(Long.parseLong(command_split[1].trim()));
+
+					if (ChatRoom.deleteChatroom(roomToDelete)) {
+						this.alert = "Der Raum mit dem Namen '" + command_split[1].trim() + "' wurde erfolgreich gelöscht.";
+					} else {
+						this.alert = "Fehler: Der Raum konnte nicht gelöscht werden. Raumliste anzeigen mit /listRooms";
+					}
+
+				} else {
+					this.alert = "Raumname muss als Parameter angegeben werden.";
+				}
+				this.alertOutput = true;
 			} else if (command_split[0].equalsIgnoreCase("listRooms")) { // listet alle Räume auf
 				ArrayList<ChatRoom> rooms = ChatRoom.getRooms();
 				if (rooms.size() == 0) {
@@ -84,24 +98,23 @@ public class ChatEntry {
 				this.alertOutput = true;
 			} else if (command_split[0].equalsIgnoreCase("listNicks")) {
 				ArrayList<String> names = ChatClient.getNicknames();
-
-				if (names.isEmpty()) {
-					this.alert = "Es existieren momentan keine Nicknames.";
+				ArrayList<ChatClient> clients = ChatClient.getClients();
+				if (clients.size() == 0) {
+					this.alert = "Es existieren momentan keine Nicknamen.";
 				} else {
 					this.alert = "NICKNAMES:\n";
-					for (int i = 0; i < names.size(); i++) {
-						this.alert += names.get(i);
-						if (i < (names.size() - 1)) {
-							this.alert += ", ";
-						}
+					for (ChatClient chatClient : clients) {
+						this.alert += chatClient.getClientID().toString() + " - " + chatClient.getNickname() + "\n";
 					}
 				}
+
 				this.alertOutput = true;
 			} else if (command_split[0].equalsIgnoreCase("help")) {
 				this.alert = "COMMANDS:\n";
-				this.alert += "/nick\n";
+				this.alert += "/nick &lt;nickName&gt;\n";
 				this.alert += "/listNicks\n";
-				this.alert += "/createRoom\n";
+				this.alert += "/createRoom &lt;roomName&gt;\n";
+				this.alert += "/deleteRoom &lt;roomID&gt;\n";
 				this.alert += "/listRooms\n";
 				this.alert += "/help\n";
 				this.alertOutput = true;

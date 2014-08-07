@@ -22,23 +22,30 @@
 		<%
 			String actRoom = "Public Room";
 			ArrayList<ChatRoom> chatrooms = (ArrayList<ChatRoom>) application.getAttribute("chatrooms");
+			String roomname = (String) application.getAttribute("roomname");
 			for(ChatRoom cr : chatrooms){
-				out.print("<p><a href='?room=" + cr.getRoomID() + "'>" + cr.getRoomName() + "</a></p>");
+				String classSelected = "";
+				if(cr.getRoomName().equals(roomname)){
+					classSelected = "selected";					
+				}
+				out.print("<p><a class='" + classSelected + "' href='?room=" + cr.getRoomID() + "'>" + cr.getRoomName() + "</a></p>");
 			}
 		%>
 	</div>
 	<div id='verlauf' room='Public Room'>
 		<%
-			ArrayList<ChatEntry> chatverlauf = (ArrayList<ChatEntry>) application.getAttribute("chatverlauf");	
-			String roomname = (String) application.getAttribute("roomname");
+			String alertMessage = (String) application.getAttribute("alertMessage");				
+			ArrayList<ChatEntry> chatverlauf = (ArrayList<ChatEntry>) application.getAttribute("chatverlauf");				
 			ChatClient client =  (ChatClient) application.getAttribute("client");
 			String nickname = client.getNickname();
 			Long clientID = client.getClientID();
 		%>
 		<div id="roomname">
-			<%
-				out.print(roomname);
-			%>
+			<p>
+				<%
+					out.print(roomname);
+				%>
+			</p>
 		</div>
 		<%
 			if(chatverlauf != null){				
@@ -85,11 +92,20 @@
 
 	<form action='Chat' method='post' name='sndMsg' id='formMsg'>
 		<textarea placeholder=" Als '<%out.print(nickname);%>' Nachricht versenden..." autofocus rows='3' cols='100' name='msg' id='textarea'></textarea>
-		<input type='hidden' name='room' value='Public Room' /> <input id='sndMsgBtn' type='submit' value='Senden' name='send' />
+		<input id='sndMsgBtn' type='submit' value='Senden' name='send' />
 	</form>
 </body>
 <script>
 	$(document).ready(function() {
+
+		$("div#verlauf div#roomname").mouseover(function() {
+			$("div#verlauf div#roomname p").css("opacity", "0.0");
+		}).mouseout(function() {
+			$("div#verlauf div#roomname p").css("opacity", "1.0");
+		});
+
+		var roomnameWidth = $("div#verlauf div#roomname").width();
+		$("div#verlauf div#roomname").css("margin-left", "-" + (roomnameWidth / 2) + "px");
 
 		$("div#verlauf").mCustomScrollbar({
 			axis : "y",
@@ -143,6 +159,9 @@
 				}
 			});
 		});
+<%if(alertMessage != ""){
+			out.print("alert('" + alertMessage + "');");
+		}%>
 	});
 </script>
 </html>

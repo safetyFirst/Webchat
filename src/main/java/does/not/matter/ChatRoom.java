@@ -72,6 +72,19 @@ public class ChatRoom {
 		return true;
 	}
 
+	public static boolean deleteChatroom(ChatRoom cr) {
+		if (cr != null) {
+			if (cr.getRoomID() != 1L) {
+				chatrooms.remove(cr);
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
 	public Long getRoomID() {
 		return this.roomID;
 	}

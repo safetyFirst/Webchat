@@ -95,6 +95,10 @@ public class ChatClient {
 		return true;
 	}
 
+	public static ArrayList<ChatClient> getClients() {
+		return clients;
+	}
+
 	public String getClientIP() {
 		return this.clientIP;
 	}
