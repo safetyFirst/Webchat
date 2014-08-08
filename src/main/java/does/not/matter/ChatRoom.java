@@ -16,20 +16,30 @@ public class ChatRoom {
 	private ArrayList<ChatEntry> chatverlauf;
 
 	public ChatRoom(String roomName, Long ownerID) {
-		roomCounter++;
-		this.roomID = roomCounter;
-		this.roomName = roomName;
-		this.ownerID = ownerID;
-		this.allowedMembers.add(ownerID);
-		chatverlauf = new ArrayList<ChatEntry>();
+		boolean roomAlreadyExist = false;
+		for (ChatRoom room : chatrooms) {
+			if (room.getRoomName().equalsIgnoreCase(roomName)) {
+				roomAlreadyExist = true;
+			}
+		}
+		if (!roomAlreadyExist) {
+			roomCounter++;
+			this.roomID = roomCounter;
+			this.roomName = roomName;
+			this.ownerID = ownerID;
+			this.allowedMembers.add(ownerID);
+			chatverlauf = new ArrayList<ChatEntry>();
+		}
 	}
 
-	public static void addChatEntryToRoom(Long roomID, ChatEntry ce) {
+	public static boolean addChatEntryToRoom(Long roomID, ChatEntry ce) {
 		for (ChatRoom chatRoom : chatrooms) {
 			if (chatRoom.getRoomID() == roomID) {
 				chatRoom.addChatEntry(ce);
+				return true;
 			}
 		}
+		return false;
 	}
 
 	public void addChatEntry(ChatEntry ce) {
@@ -63,13 +73,12 @@ public class ChatRoom {
 	}
 
 	public static boolean addChatroom(ChatRoom cr) {
-		for (ChatRoom room : chatrooms) {
-			if (room.getRoomName().equalsIgnoreCase(cr.getRoomName())) {
-				return false;
-			}
+		if (cr.getRoomID() != null) {
+			chatrooms.add(cr);
+			return true;
+		} else {
+			return false;
 		}
-		chatrooms.add(cr);
-		return true;
 	}
 
 	public static boolean deleteChatroom(ChatRoom cr) {

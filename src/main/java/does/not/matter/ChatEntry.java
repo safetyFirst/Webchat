@@ -20,6 +20,7 @@ public class ChatEntry {
 	private String alert;
 	private boolean msgOutput = false;
 	private boolean alertOutput = false;
+	private boolean nickChange = false;
 
 	private List<Long> allowedRecipients = new ArrayList<Long>();
 
@@ -37,58 +38,62 @@ public class ChatEntry {
 			String[] inhalt_split = this.content.split("/");
 			String[] command_split = inhalt_split[1].split(" ");
 			if (command_split[0].equalsIgnoreCase("nick")) { // z.B. /nick Marco
-				if (command_split[1] != null && !command_split[1].trim().equals("")) {
+				if (command_split.length > 1 && command_split[1] != null && !command_split[1].trim().equals("")) {
 					if (command_split[1].trim().contains(",")) {
-						this.alert = "Der Nickname darf kein Komma [,] enthalten.";
+						this.alert = "[nick] Der Nickname darf kein Komma [,] enthalten.";
 					} else {
 						String nickname = command_split[1].trim();
 						String oldNickname = ChatClient.getNickByID(this.clientID);
 
 						if (ChatClient.setNickByID(nickname, this.clientID)) {
 							if (oldNickname != null) {
-								this.alert = "'" + oldNickname + "' hat seinen Nickname zu '" + nickname + "' geändert.";
+								this.alert = "[nick] '" + oldNickname + "' hat seinen Nickname zu '" + nickname + "' geändert.";
 							} else {
-								this.alert = "[" + this.clientIP + "]" + " hat seinen Nickname zu '" + nickname + "' geändert.";
+								this.alert = "[nick] [" + this.clientIP + "]" + " hat seinen Nickname zu '" + nickname + "' geändert.";
 							}
 						} else {
-							this.alert = "Der Nickname '" + nickname + "' ist bereits vergeben.";
+							this.alert = "[nick] Der Nickname '" + nickname + "' ist bereits vergeben.";
 						}
 
 						allowedRecipients.add(-1L);
 					}
 				} else {
-					this.alert = "Nickname muss als Parameter angegeben werden";
+					this.alert = "[nick] Nickname muss als Parameter angegeben werden";
 				}
 				this.alertOutput = true;
+				this.nickChange = true;
 			} else if (command_split[0].equalsIgnoreCase("createRoom")) { // z.B. /createRoom Halle
-				if (command_split[1] != null && !command_split[1].trim().equals("")) {
+				if (command_split.length > 1 && command_split[1] != null && !command_split[1].trim().equals("")) {
 					if (ChatRoom.addChatroom(new ChatRoom(command_split[1].trim(), this.clientID))) {
-						this.alert = "Der Raum mit dem Namen '" + command_split[1].trim() + "' wurde erfolgreich erstellt.";
+						this.alert = "[createRoom] Der Raum mit dem Namen '" + command_split[1].trim() + "' wurde erstellt.";
 					} else {
-						this.alert = "Fehler: Der Raum konnte nicht erstellt werden. Raumliste anzeigen mit /listRooms";
+						this.alert = "[createRoom] Fehler: Der Raum konnte nicht erstellt werden. Raumliste anzeigen mit /listRooms";
 					}
 				} else {
-					this.alert = "Raumname muss als Parameter angegeben werden.";
+					this.alert = "[createRoom] Raumname muss als Parameter angegeben werden.";
 				}
 				this.alertOutput = true;
 			} else if (command_split[0].equalsIgnoreCase("deleteRoom")) {
-				if (command_split[1] != null && !command_split[1].trim().equals("")) {
-					ChatRoom roomToDelete = ChatRoom.getRoomByID(Long.parseLong(command_split[1].trim()));
-
-					if (ChatRoom.deleteChatroom(roomToDelete)) {
-						this.alert = "Der Raum mit dem Namen '" + command_split[1].trim() + "' wurde erfolgreich gelöscht.";
+				try {
+					if (command_split.length > 1 && command_split[1] != null && !command_split[1].trim().equals("")) {
+						Long param = Long.parseLong(command_split[1].trim());
+						ChatRoom roomToDelete = ChatRoom.getRoomByID(param);
+						if (ChatRoom.deleteChatroom(roomToDelete)) {
+							this.alert = "[deleteRoom] Der Raum mit dem Namen '" + roomToDelete.getRoomName() + "' (" + roomToDelete.getRoomID() + ") wurde erfolgreich gelöscht.";
+						} else {
+							this.alert = "[deleteRoom] Fehler: Der Raum konnte nicht gelöscht werden. Raumliste anzeigen mit /listRooms";
+						}
 					} else {
-						this.alert = "Fehler: Der Raum konnte nicht gelöscht werden. Raumliste anzeigen mit /listRooms";
+						this.alert = "[deleteRoom] Es muss die Raum-ID als Parameter angegeben werden.";
 					}
-
-				} else {
-					this.alert = "Raumname muss als Parameter angegeben werden.";
+				} catch (NumberFormatException nfe) {
+					this.alert = "[deleteRoom] Es muss eine Ganzzahl für die Raum-ID angegeben werden.";
 				}
 				this.alertOutput = true;
 			} else if (command_split[0].equalsIgnoreCase("listRooms")) { // listet alle Räume auf
 				ArrayList<ChatRoom> rooms = ChatRoom.getRooms();
 				if (rooms.size() == 0) {
-					this.alert = "Es existieren momentan keine Räume.";
+					this.alert = "[listRooms] Es existieren momentan keine Räume.";
 				} else {
 					this.alert = "CHATROOMS:\n";
 					for (ChatRoom chatRoom : rooms) {
@@ -100,7 +105,7 @@ public class ChatEntry {
 				ArrayList<String> names = ChatClient.getNicknames();
 				ArrayList<ChatClient> clients = ChatClient.getClients();
 				if (clients.size() == 0) {
-					this.alert = "Es existieren momentan keine Nicknamen.";
+					this.alert = "[listNicks] Es existieren momentan keine Nicknamen.";
 				} else {
 					this.alert = "NICKNAMES:\n";
 					for (ChatClient chatClient : clients) {
@@ -155,6 +160,10 @@ public class ChatEntry {
 
 	public boolean getAlertOutput() {
 		return this.alertOutput;
+	}
+
+	public boolean getNickChange() {
+		return this.nickChange;
 	}
 
 	public List<Long> getAllowedRecipients() {

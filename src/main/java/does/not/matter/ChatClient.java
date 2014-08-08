@@ -15,11 +15,13 @@ public class ChatClient {
 	private static ArrayList<ChatClient> clients = new ArrayList<ChatClient>();
 
 	public ChatClient(String clientIP) {
-		this.clientIP = clientIP;
-		clientCounter++;
-		this.clientID = clientCounter;
-		this.nickname = "Guest" + this.clientID;
-		this.selectedRoom = 1L;
+		if (ChatClient.getIdByIP(clientIP) == null) {
+			this.clientIP = clientIP;
+			clientCounter++;
+			this.clientID = clientCounter;
+			this.nickname = "Guest" + this.clientID;
+			this.selectedRoom = 1L;
+		}
 	}
 
 	public static ArrayList<String> getNicknames() {
@@ -86,13 +88,12 @@ public class ChatClient {
 	}
 
 	public static boolean addClient(ChatClient cc) {
-		for (ChatClient chatClient : clients) {
-			if (chatClient.getClientIP().equals(cc.getClientIP())) {
-				return false;
-			}
+		if (cc.getClientID() != null) {
+			clients.add(cc);
+			return true;
+		} else {
+			return false;
 		}
-		clients.add(cc);
-		return true;
 	}
 
 	public static ArrayList<ChatClient> getClients() {

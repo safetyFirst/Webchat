@@ -19,7 +19,8 @@ public class ChatServer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String clientIP = request.getRemoteAddr();
+		/*String clientIP = request.getRemoteAddr();
+
 		ChatClient.addClient(new ChatClient(clientIP));
 
 		ChatClient cc = ChatClient.getClientByIP(clientIP);
@@ -45,11 +46,79 @@ public class ChatServer extends HttpServlet {
 		request.getServletContext().setAttribute("client", ChatClient.getClientByIP(clientIP));
 		request.getServletContext().setAttribute("roomname", cr.getRoomName());
 		request.getRequestDispatcher("/index.jsp").forward(request, response);
+		*/
+		manageRequests('g', request, response);
+	}
+
+	private void manageRequests(char method, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		boolean roomDeletedMsg = false;
+		String content = null;
+		if (method == 'p') {
+			content = request.getParameter("msg");
+		}
+
+		if ((method == 'p' && content != null && !content.trim().equals("")) || (method == 'g')) {
+
+			String clientIP = request.getRemoteAddr();
+			if (method == 'g') {
+				ChatClient.addClient(new ChatClient(clientIP));
+			}
+			ChatClient cc = ChatClient.getClientByIP(clientIP);
+
+			if (method == 'g') {
+				if (request.getParameter("room") != null) {
+					if (cc.getSelectedRoom() != Long.parseLong(request.getParameter("room"))) {
+						ChatClient.changeSelectedRoom(cc.getClientID(), Long.parseLong(request.getParameter("room")));
+					}
+				}
+				ChatRoom.addChatroom(new ChatRoom("Public Room", 0L));
+			}
+
+			ChatRoom cr = ChatRoom.getRoomByID(cc.getSelectedRoom());
+			String alertMessage = "";
+			if (cr == null) {
+				alertMessage += "Der zuletzt gewählte Raum existiert nicht mehr. \\n";
+				if (content != null) {
+					alertMessage += "Deine letzte Nachricht wurde nicht gesendet: \\n\\n'" + content + "'";
+				}
+				System.out.println("alertMessage: " + alertMessage);
+				roomDeletedMsg = true;
+				cr = ChatRoom.getRoomByID(1L);
+				ChatClient.changeSelectedRoom(cc.getClientID(), 1L);
+			}
+
+			if (method == 'p' && !roomDeletedMsg) {
+				ChatEntry ce = new ChatEntry(clientIP, content, cc.getSelectedRoom());
+
+				if (cr.getRoomID() != 1L && ce.getAlertOutput()) {
+					if (!ChatRoom.addChatEntryToRoom(cr.getRoomID(), ce)) {
+						alertMessage += ce.getAlert();
+					}
+					if (ce.getNickChange()) {
+						if (!ChatRoom.addChatEntryToRoom(1L, ce)) {
+							alertMessage += ce.getAlert();
+						}
+					}
+				} else {
+					if (!ChatRoom.addChatEntryToRoom(cr.getRoomID(), ce)) {
+						alertMessage += ce.getAlert();
+					}
+				}
+			}
+
+			request.getServletContext().setAttribute("alertMessage", alertMessage);
+			request.getServletContext().setAttribute("chatrooms", ChatRoom.getRooms());
+			request.getServletContext().setAttribute("chatverlauf", cr.getChatverlauf());
+			request.getServletContext().setAttribute("client", ChatClient.getClientByIP(clientIP));
+			request.getServletContext().setAttribute("roomname", cr.getRoomName());
+			request.getRequestDispatcher("/index.jsp").forward(request, response);
+		}
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String content = request.getParameter("msg");
-		System.out.println("Content: " + content);
+		manageRequests('p', request, response);
+		/*String content = request.getParameter("msg");
+
 		if (content != null && !content.trim().equals("")) {
 
 			String clientIP = request.getRemoteAddr();
@@ -76,6 +145,6 @@ public class ChatServer extends HttpServlet {
 			request.getServletContext().setAttribute("client", ChatClient.getClientByIP(clientIP));
 			request.getServletContext().setAttribute("roomname", cr.getRoomName());
 			request.getRequestDispatcher("/index.jsp").forward(request, response);
-		}
+		}*/
 	}
 }

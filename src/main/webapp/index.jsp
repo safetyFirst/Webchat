@@ -160,7 +160,7 @@
 			});
 		});
 <%if(alertMessage != ""){
-			out.print("alert('" + alertMessage + "');");
+			out.println("alert(\"" + alertMessage + "\");");
 		}%>
 	});
 </script>
