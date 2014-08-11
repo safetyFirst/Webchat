@@ -1,6 +1,5 @@
 <%@page import="does.not.matter.ChatRoom"%>
 <%@page import="does.not.matter.ChatEntry"%>
-<%@page import="does.not.matter.ChatClient"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.Date"%>
 <%@page import="java.text.SimpleDateFormat"%>
@@ -17,7 +16,7 @@
 </head>
 <body style='margin: 0; padding: 0;'>
 
-	<img src='dbad_transparent.gif' id='dbad-logo' />
+	<!-- <img src='dbad_transparent.gif' id='dbad-logo' /> -->
 	<div id='menu'>
 		<%
 			String actRoom = "Public Room";
@@ -36,9 +35,8 @@
 		<%
 			String alertMessage = (String) application.getAttribute("alertMessage");				
 			ArrayList<ChatEntry> chatverlauf = (ArrayList<ChatEntry>) application.getAttribute("chatverlauf");				
-			ChatClient client =  (ChatClient) application.getAttribute("client");
-			String nickname = client.getNickname();
-			Long clientID = client.getClientID();
+			Long clientID = (Long) application.getAttribute("clientID");			
+			
 		%>
 		<div id="roomname">
 			<p>
@@ -90,13 +88,9 @@
 		%>
 	</div>
 
-	<form action='Chat' method='post' name='sndMsg' id='formMsg'>
-		<textarea placeholder=" Als '<%out.print(nickname);%>' Nachricht versenden..." autofocus rows='3' cols='100' name='msg' id='textarea'></textarea>
-		<input id='sndMsgBtn' type='submit' value='Senden' name='send' />
-	</form>
 </body>
 <script>
-	$(document).ready(function() {
+	$(document).ready(function() {		
 
 		$("div#verlauf div#roomname").mouseover(function() {
 			$("div#verlauf div#roomname p").css("opacity", "0.0");
@@ -125,14 +119,14 @@
 			setWidth : "80%"
 		});
 
-		$('textarea#textarea').keypress(function(e) {
+		/*$('textarea#textarea').keypress(function(e) {
 			if (e.which == 13 && e.shiftKey) {
 			} else if (e.which == 13) {
 				if ($.trim($(this).val()) != "") {
 					$('form#formMsg').submit();
 				}
 			}
-		});
+		});*/
 
 		//$('div#verlauf').scrollTop($('div#verlauf')[0].scrollHeight);
 

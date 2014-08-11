@@ -13,7 +13,7 @@ div#menu {
 	position: fixed;
 	right: 0%;
 	top: 0%;
-	height: 86%;
+	height: 100%;
 	width: 20%;
 	background: #28314b;
 	color: #4c90c9;
@@ -47,7 +47,7 @@ div#verlauf {
 	overflow: auto;
 	position: fixed;
 	top: 0;
-	height: 86%;
+	height: 100%;
 	width: 80%;
 	padding: 0% 0% 0% 0%;
 	background-color: rgba(0, 0, 0, 0.4);
@@ -133,12 +133,11 @@ form#formMsg {
 	position: fixed;
 	bottom: 0;
 	clear: both;
-	height: 14%;
+	height: 100%;
 	width: 100%;
 	padding: 0%;
 	font-family: Consolas, sans-serif;
 	background: #293134;
-	border-top: 1px solid #888;
 	z-index: 1001;
 }
 

@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class ChatServer
  */
-@WebServlet("/Chat")
-public class ChatServer extends HttpServlet {
+@WebServlet("/Chat2")
+public class ChatServer2 extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -113,7 +113,7 @@ public class ChatServer extends HttpServlet {
 			request.getServletContext().setAttribute("clientID", ChatClient.getIdByIP(clientIP));
 			request.getServletContext().setAttribute("nickname", ChatClient.getNickByIP(clientIP));
 			request.getServletContext().setAttribute("roomname", cr.getRoomName());
-			request.getRequestDispatcher("/chat-ui.jsp").forward(request, response);
+			request.getRequestDispatcher("/chatform.jsp").forward(request, response);
 		}
 	}
 
